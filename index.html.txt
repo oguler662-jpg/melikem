@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melike'nin Doğum Günü 🎉</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: #f8f0ff;
+    text-align: center;
+    overflow-x: hidden;
+  }
+  #login {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  #login input {
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  #login button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: none;
+    background: #ff69b4;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #birthday {
+    display: none;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  h1 {
+    font-size: 3em;
+    color: #ff1493;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #countdown {
+    font-size: 2em;
+    margin-top: 20px;
+    text-align: center;
+  }
+  #message {
+    margin-top: 30px;
+    font-size: 1.2em;
+    line-height: 1.5em;
+    background: #fff0f8;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ff69b4;
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h2>Melike'nin Doğum Günü Sitesine Hoşgeldin!</h2>
+  <p>Lütfen şifreyi gir:</p>
+  <input type="password" id="password" placeholder="Şifre">
+  <button onclick="checkPassword()">Giriş Yap</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<div id="birthday">
+  <h1>Melike! Doğum Günün Kutlu Olsun! 🎉</h1>
+  <div id="countdown"></div>
+  <div id="message">
+    Melike,<br><br>
+    Bugün senin doğum günün. Belki her şey tam değil, belki hâlâ aramızda mesafeler var. Ama bu özel gününde sana içten bir şey söylemek istedim.<br><br>
+    Sana söylediğim o yalan… keşke hiç olmasaydı. Ama seninle yeniden konuşmak, gülmek, hatta susmak bile güzeldi. Zaman istedin, ve ben bunu anlıyorum. Çünkü bazen en değerli şey, biraz beklemeyi bilmektir.<br><br>
+    Bu sayfa, bir özür değil sadece. Bir teşekkür. Varlığın için, sabrın için, güzelliğin için. Belki bir gün yeniden başlarız. Belki bu satırlar, o günün ilk adımı olur.<br><br>
+    Doğum günün kutlu olsun Melike. Sen hep en iyisini hak ettin.<br><br>
+    – Emirhan
+  </div>
+  <audio id="birthday-music" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-birthday.mp3" type="audio/mpeg">
+  </audio>
+  <canvas id="confetti"></canvas>
+</div>
+
+<script>
+const PASSWORD = "Melike2025HappyBday!";
+
+function checkPassword() {
+  const input = document.getElementById('password').value;
+  if(input === PASSWORD){
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('birthday').style.display = 'block';
+    startCountdown(10); // 10 saniye geri sayım
+    startConfetti();
+
+    // Müzik otomatik çal
+    const music = document.getElementById('birthday-music');
+    music.play().catch(() => {
+      console.log("Müzik başlatılamadı, kullanıcı etkileşimi gerekebilir.");
+    });
+
+  } else {
+    document.getElementById('error').textContent = "Yanlış şifre! Tekrar dene.";
+  }
+}
+
+// Geri sayım fonksiyonu (saniye)
+function startCountdown(seconds) {
+  const countdownEl = document.getElementById('countdown');
+  let remaining = seconds;
+
+  countdownEl.textContent = `🎉 Geri Sayım: ${remaining} saniye 🎉`;
+  const interval = setInterval(() => {
+    remaining--;
+    if(remaining <= 0){
+      countdownEl.textContent = "🎂 Doğum Günün Kutlu Olsun! 🎂";
+      clearInterval(interval);
+      return;
+    }
+    countdownEl.textContent = `🎉 Geri Sayım: ${remaining} saniye 🎉`;
+  }, 1000);
+}
+
+// Konfeti animasyonu
+function startConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const confetti = [];
+  for(let i=0; i<150; i++){
+    confetti.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*6+4,
+      d: Math.random()*50+10,
+      color: `hsl(${Math.random()*360},100%,50%)`,
+      tilt: Math.random()*10-10,
+      tiltAngleIncremental: Math.random()*0.07+0.05,
+      tiltAngle: 0
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confetti.forEach((c)=>{
+      ctx.beginPath();
+      ctx.lineWidth = c.r/2;
+      ctx.strokeStyle = c.color;
+      ctx.moveTo(c.x + c.tilt + c.r/4, c.y);
+      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/4);
+      ctx.stroke();
+    });
+    update();
+  }
+
+  function update(){
+    confetti.forEach((c, i)=>{
+      c.tiltAngle += c.tiltAngleIncremental;
+      c.y += (Math.cos(c.d)+3+c.r/2)/2;
+      c.tilt = Math.sin(c.tiltAngle)*15;
+
+      if(c.y > canvas.height){
+        confetti[i] = {x: Math.random()*canvas.width, y: -10, r: c.r, d: c.d, color: c.color, tilt: c.tilt, tiltAngleIncremental: c.tiltAngleIncremental, tiltAngle: 0};
+      }
+    });
+  }
+
+  setInterval(draw, 20);
+}
+</script>
+
+</body>
+</html>
